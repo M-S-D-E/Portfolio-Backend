@@ -10,7 +10,8 @@ const userShema = new Schema({
         email: { type: String },
         password: { type: String },
         userName: { type: String, unique: true },
-        termsAndConditions: { type: String },
-
+        termsAndConditions: { type:Boolean }
+},{
+        timestamps:true
 })
 export const user = model('User', userShema)

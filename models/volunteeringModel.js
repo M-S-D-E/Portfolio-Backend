@@ -11,6 +11,8 @@ const volunteeringSchema = new Schema({
             location: { type: String },
             projectName: { type: String },
             user:{type: Types.ObjectId, ref:'User'}
+},{
+    timestamps:true
 })
 
 export const volunteeringModel = model('Volunteering',volunteeringSchema)
