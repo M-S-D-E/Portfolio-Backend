@@ -16,6 +16,8 @@ const userProfile = new Schema({
     linkedinLink: { type: String },
     twitterLink: { type: String },
     user:{type: Types.ObjectId, ref:'User'}
+},{
+    timestamps:true
 })
 
 export const profileModel = model('Profile',userProfile)

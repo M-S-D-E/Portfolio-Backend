@@ -8,6 +8,9 @@ const achievementSchema = new Schema({
             date: { type: String },
             nameOfInstitution: { type: String },
             user:{type: Types.ObjectId, ref:'User'}
+}
+,{
+    timestamps:true
 })
 
 export const achievementModel = model('Achievement',achievementSchema)

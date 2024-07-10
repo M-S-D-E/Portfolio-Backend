@@ -10,6 +10,8 @@ const projectSchema = new Schema ({
     startDate: { type: String },
     endDate: { type: String },
     user:{type: Types.ObjectId, ref:'User'}
+},{
+    timestamps:true
 })
 
 export const projectModel = model('Project',projectSchema)
