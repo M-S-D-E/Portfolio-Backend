@@ -1,5 +1,5 @@
 import { experience, experienceModel } from "../models/experienceModel.js";
-import { user } from "../models/user_model.js";
+import { user, user } from "../models/user_model.js";
 import { experience } from "../Schema/experince_Schema.js";
 
 export const addExperience = async (req, res) => {
@@ -60,36 +60,47 @@ export const getExperience = async (req, res, next) => {
 };
 
 // Update an experience
-export const updateExperience = async (req, res, next) => {
+export const updateExperience = async (req, res) => {
     try {
-        const { error, value } = experience.validate(req.body)
+        const { error, value } = experience.validate(req.body);
         if (error) {
-            return res.status(400).send(error.details[0].message)
+            return res.status(400).send(error.details[0].message);
         }
-        console.log('value', value)
-        const experience = await experienceModel.findByIdandUpdate(req.params.id, req.body)
-        {
-            res.status(200).json(experience)
+
+        const updatedExperience = await experienceModel.findByIdAndUpdate(
+            req.params.experienceId,
+            value,
+            { new: true }
+        );
+
+        if (!updatedExperience) {
+            return res.status(404).send('Experience not found');
         }
+
+        res.status(201).json({ experience: updatedExperience });
     } catch (error) {
-        next(error)
+        res.status(500).send(error);
     }
+};
 
-}
-
-
-// delete an experience
-
-export const deleteExperience = async (req, res, next) => {
+// Delete  experience
+export const deleteExperience = async (req, res) => {
     try {
-        const deleteData = await experienceModel.findByIdandDelete(req.params.id)
-        {
-            res.status(200).json(deleteData)
-            console.log(`experience with the ID:${req.params.id}has been deleted`)
+        const deletedExperience = await experienceModel.findByIdAndDelete(req.params.experienceId);
 
+        if (!deletedExperience) {
+            return res.status(404).send('Experience not found');
         }
-    } catch (error) {
-        next(error)
-    }
 
-}
+        // Remove experience reference from user
+        const user = await user.findById(deletedExperience.user);
+        if (user) {
+            user.experience = user.experience.filter(experienceId => experienceId.toString() !== req.params.experienceId);
+            await user.save();
+        }
+
+        res.status(201).json({ experience: deletedExperience });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};

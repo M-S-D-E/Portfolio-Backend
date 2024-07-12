@@ -57,36 +57,48 @@ export const getProject = async (req, res, next) => {
     res.status(200).json(project)
 };
 
-// Update an project
-export const updateProject = async (req, res, next) => {
+// Update a project
+export const updateProject = async (req, res) => {
     try {
-        const { error, value } = project.validate(req.body)
+        const { error, value } = project.validate(req.body);
         if (error) {
-            return res.status(400).send(error.details[0].message)
+            return res.status(400).send(error.details[0].message);
         }
-        console.log('value', value)
-        const Project = await projectModel.findByIdandUpdate(req.params.id, req.body)
-        {
-            res.status(200).json(Project)
+
+        const deletedProject = await projectModel.findByIdAndUpdate(
+            req.params.projectId,
+            value,
+            { new: true }
+        );
+
+        if (!deletedProject) {
+            return res.status(404).send('Project not found');
         }
+
+        res.status(201).json({ project: deletedProject });
     } catch (error) {
-        next(error)
+        res.status(500).send(error);
     }
+};
 
-}
-
-
-// delete a project
-
-export const deleteProject = async (req, res, next) => {
+// Delete  project
+export const deleteProject = async (req, res) => {
     try {
-        const deleteData = await projectModel.findByIdandDelete(req.params.id)
-        {
-            res.status(200).json(deleteData)
-            console.log(`project with the ID:${req.params.id}has been deleted`)
-        }
-    } catch (error) {
-        next(error)
-    }
+        const deletedProject = await projectModel.findByIdAndDelete(req.params.projectId);
 
-}
+        if (!deletedProject) {
+            return res.status(404).send('Project not found');
+        }
+
+        // Remove project from user
+        const user = await user.findById(deletedProject.user);
+        if (user) {
+            user.project = user.project.filter(projectId => projectId.toString() !== req.params.projectId);
+            await user.save();
+        }
+
+        res.status(201).json({ project: deletedProject });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
