@@ -3,12 +3,12 @@ import {  addSkill, getSkill, getAllSkill,updateSkill, deleteSkill } from "../co
 
 export const skillRouter = Router()
 
-skillRouter.post('/education', addSkill)
+skillRouter.post('/skill', addSkill)
 
-skillRouter.get('/education',getAllSkill)
+skillRouter.get('/skill',getAllSkill)
 
-skillRouter.get('/education/:id',getSkill)
+skillRouter.get('/skill/:id',getSkill)
 
-skillRouter.patch('/education/:id:educationStatus',updateSkill)
+skillRouter.patch('/skill/:id:skillStatus',updateSkill)
 
-skillRouter.delete('/education/:id',deleteSkill)
+skillRouter.delete('/skill/:id',deleteSkill)

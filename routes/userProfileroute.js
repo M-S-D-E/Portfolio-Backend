@@ -3,12 +3,12 @@ import { addUserProfile,deleteUserProfile, getAllUserProfile, getUserProfile, up
 
 export const userProfileRouter = Router()
 
-userProfileRouter.post('/education', addUserProfile)
+userProfileRouter.post('/userProfile', addUserProfile)
 
-userProfileRouter.get('/education',getAllUserProfile)
+userProfileRouter.get('/userProfile',getAllUserProfile)
 
-userProfileRouter.get('/education/:id',getUserProfile)
+userProfileRouter.get('/userProfile/:id',getUserProfile)
 
-userProfileRouter.patch('/education/:id:educationStatus',updateUserProfile)
+userProfileRouter.patch('/userProfile/:id:userProfileStatus',updateUserProfile)
 
-userProfileRouter.delete('/education/:id',deleteUserProfile)
+userProfileRouter.delete('/userProfile/:id',deleteUserProfile)

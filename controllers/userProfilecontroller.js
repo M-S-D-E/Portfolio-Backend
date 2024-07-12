@@ -19,7 +19,7 @@ export const userProfile = async (req, res) => {
     }
 
     // if you find the user,push the userProfile id you just created inside
-    user.userProfile.push(userProfile._id);
+    user.userProfile = userProfile._id
 
     // and save the user now with the userProfile
     await user.save();

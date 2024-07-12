@@ -3,7 +3,7 @@ import { addEducation,deleteEducation, getAllEducation, getEducation, updateEduc
 
 export const educationRouter = Router()
 
-educationRouter.post('/education', addEducation)
+educationRouter.post('/education',addEducation)
 
 educationRouter.get('/education',getAllEducation)
 

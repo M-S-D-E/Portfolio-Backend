@@ -2,6 +2,7 @@ import { education, educationModel } from "../models/educationModel.js";
 import { user } from "../models/user_model.js";
 import { education } from "../Schema/education_Schema.js";
 
+
 export const addEducation = async (req, res) => {
 
   try {
@@ -16,7 +17,7 @@ export const addEducation = async (req, res) => {
     const education = await educationModel.create(value);
 
     //  after, find user with the id passed when creating the education
-    const User = await user.findById(value, user);
+    const User = await user.findById(value.user);
     if (!user) {
       return res.status(404).send('user not found');
     }
