@@ -1,6 +1,10 @@
 import express from 'express'
 import { configDotenv } from 'dotenv';
-import { dbconnection } from './config/db.js';
+import { dbconnection } from './config/db.js'; 
+import session from 'express-session';
+import { userRouter } from './routes/userRoute.js';
+import MongoStore from 'connect-mongo';
+
 
 
 
@@ -8,10 +12,24 @@ import { dbconnection } from './config/db.js';
 const app = express();
  dbconnection();
 
+
+
+
 // Middleware
 app.use(express.json());
+app.use(express.static('uploads'));
 
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    // cookie: { secure: true },
+    store:MongoStore.create({
+        mongoUrl:process.env.Mongo_uri
+    })
+  }));
+  app.use('/api/v1',userRouter)
 
  
 
