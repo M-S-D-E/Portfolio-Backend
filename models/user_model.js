@@ -19,4 +19,6 @@ const userShema = new Schema({
 },{
         timestamps:true
 })
+
 export const userModel = model('User', userShema)
+

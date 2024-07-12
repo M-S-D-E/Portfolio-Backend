@@ -2,8 +2,8 @@ import Joi from "joi";
 
 // creating achievment schema
 
-export const userAchievement = Joi.object({
-        awards:Joi.string(),
+export const achievement = Joi.object({
+        awards:Joi.string().required(),
         description:Joi.string(),
         image:Joi.string(),
         date:Joi.string(),
