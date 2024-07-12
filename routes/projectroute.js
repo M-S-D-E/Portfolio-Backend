@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { addProject, deleteProject, getProject, getProjects, updateProject } from "../controllers/projectcontroller.js";
+import { addProject, deleteProject, getProject, getAllProject, updateProject } from "../controllers/projectcontroller.js";
 
 
 export const projectRouter = Router()
 
 projectRouter.post('/project', addProject)
 
-projectRouter.get('/project',getProjects)
+projectRouter.get('/project',getAllProject)
 
 projectRouter.get('/project/:id',getProject)
 

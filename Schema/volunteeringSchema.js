@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 
-export const volunteering = Joi.object({
+export const volunteer = Joi.object({
     organization: Joi.string(),
     description: Joi.string(),
     skills:  Joi.string(),

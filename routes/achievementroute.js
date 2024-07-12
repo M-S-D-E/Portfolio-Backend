@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { addAchievement, deleteAchievement, getAchievement, getAchievements, updateAchievement } from "../controllers/achievementcontroller.js";
+import { addAchievement, deleteAchievement, getAchievement, getAllAchievement, updateAchievement } from "../controllers/achievementcontroller.js";
 
 
 export const achievementRouter = Router()
 
 achievementRouter.post('/achievement', addAchievement)
 
-achievementRouter.get('/achievement',getAchievements)
+achievementRouter.get('/achievement',getAllAchievement)
 
 achievementRouter.get('/achievement/:id',getAchievement)
 

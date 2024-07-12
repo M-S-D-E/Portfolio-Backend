@@ -1,77 +1,92 @@
 import { projectModel } from "../models/projectModel.js";
+import { user } from "../models/user_model.js";
+import { project } from "../Schema/projectSchema.js";
 
-export const addProject = async(req, res) => {
-   
+export const addProject = async (req, res) => {
+
     try {
-        const {error, value} = userSchema.validate(req.body)
-        if(error){
+        const { error, value } = project.validate(req.body)
+        if (error) {
             return res.status(400).send(error.details[0].message)
         }
-        console.log('request', req.body)
-         const addData = await projectModel.create(req.body);
-        res.send(addData);
-   
+        // create project with the value
+        const project = await projectModel.create(value);
+
+        //  after,find the user with the id that you passed when creating the project
+        const User = await user.findById(value.user);
+        if (!user) {
+            return res.status(404).send('user not found');
+        }
+
+        // if you find the user,push the project id you just created inside
+        user.project.push(project._id);
+
+        // and save the user now with the project
+        await user.save();
+
+        // return the project
+        res.status(201).json({ project });
+
     } catch (error) {
-        console.log(error)
+        return res.status(500).send(error)
     }
-    
+
 }
 
 // Get all projects
-export const getProjects = async (req,res, next) => {
+export const allProject = async (req, res) => {
     try {
-       const getData = await projectModel.find() 
-       {
-        res.status(200).json(getData)
-       }
+        // we are fetching project that belongs to a particular user
+        const userId = req.params.id
+        const allProject = await projectModel.find()
+        if (allProject.length == 0) {
+            return res.status(404).send('No Project added')
+        }
+
+        res.status(200).json({ project: allProject })
     } catch (error) {
-       next(error) 
+
     }
 };
 
 // Get A Single project by ID
-export const getProject = async (req,res,next) => {
-    try {
-        const getSingleData = await projectModel.findById(req.params.id)
-        {
-            res.status(200).json(getSingleData)
-        }
-    } catch (error) {
-      next(error)  
-    }
+export const getProject = async (req, res, next) => {
+
+    const project = await projectModel.findById(req.params.id)
+
+    res.status(200).json(project)
 };
 
 // Update an project
-export const updateProject = async (req,res, next) => {
+export const updateProject = async (req, res, next) => {
     try {
-        const {error, value} = userSchema.validate(req.body)
-        if(error){
+        const { error, value } = project.validate(req.body)
+        if (error) {
             return res.status(400).send(error.details[0].message)
         }
-       const status = req.params.projectStatus;
-       console.log(status)
-        const updateData = await projectModel.findByIdandUpdate(req.params.id, {projectStatus:status})
+        console.log('value', value)
+        const Project = await projectModel.findByIdandUpdate(req.params.id, req.body)
         {
-            res.status(200).json(updateData)
+            res.status(200).json(Project)
         }
     } catch (error) {
-      next(error)  
+        next(error)
     }
 
 }
-    
+
 
 // delete a project
 
-export const deleteProject = async (req,res, next) => {
-try {
-    const deleteData = await projectModel.findByIdandDelete(req.params.id)
-    {
-        res.status(200).json(deleteData)
-        console.log(`project with the ID:${req.params.id}has been deleted`)
+export const deleteProject = async (req, res, next) => {
+    try {
+        const deleteData = await projectModel.findByIdandDelete(req.params.id)
+        {
+            res.status(200).json(deleteData)
+            console.log(`project with the ID:${req.params.id}has been deleted`)
+        }
+    } catch (error) {
+        next(error)
     }
-} catch (error) {
- next(error)   
-}
 
 }

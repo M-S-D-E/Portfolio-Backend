@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 
 //Defining new User Schema
-const userShema = new Schema({
+const userSchema = new Schema({
    
         firstName: { type: String },
         lastName: { type: String },
@@ -14,4 +14,4 @@ const userShema = new Schema({
 },{
         timestamps:true
 })
-export const user = model('User', userShema)
+export const user = model('User', userSchema)

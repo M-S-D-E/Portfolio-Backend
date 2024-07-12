@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const useraProfile = Joi.object({
+export const userSchema = Joi.object({
     firstName:Joi.string().required(),
     lastName:Joi.string().required(),
     otherName:Joi.string(),
