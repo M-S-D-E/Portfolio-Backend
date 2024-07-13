@@ -6,73 +6,90 @@ import bcrypt from 'bcrypt'
 
 // creating a Post method
 export const signup = async (req, res,) => {
-    const { error, value } = userSchema.validate(req.body)
-    if (error) {
-        return res.status(400).send(error.details[0].message)
+  const { error, value } = userSchema.validate(req.body)
+  if (error) {
+    return res.status(400).send(error.details[0].message)
+  }
+  const email = value.email
+  console.log('email', email)
+
+  const findIfUserExit = await userModel.findOne({ email })
+
+  // checking if a user exit
+  if (findIfUserExit) {
+    return res.status(401).send('User has already signed up')
+  } else {
+    const hashedPassword = await bcrypt.hash(value.password, 12)
+    value.password = hashedPassword
+  }
+  const addUser = await userModel.create(value)
+  req.session.user = { id: addUser.id }
+  return res.status(201).send(addUser)
+}
+
+
+export const getUser = async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    // Get user based on the user id, excluding password and populating education
+    const userDetails = await userModel.findById(userId)
+      .select('-password')
+      .populate('education');
+
+    if (!userDetails) {
+      return res.status(404).send('User not found');
     }
-    const email = value.email
-    console.log('email', email)
+    return res.status(200).json({ user: userDetails });
 
-    const findIfUserExit = await userModel.findOne({ email })
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
 
-    // checking if a user exit
-    if (findIfUserExit) {
-        return res.status(401).send('User has already signed up')
+// check if username already exist
+export const getUserNames = async (req,res) => {
+try {
+  // get query params
+  const { filter = "{}" } = req.query;
+ 
+ // get all users from database
+  const allUsers = await userModel
+    .find(JSON.parse(filter))
+
+     // Return response
+     res.status(200).json(allUsers);
+} catch (error) {
+  return res.status(500).send(error.message);
+}
+}
+
+
+
+export const login = async (req, res, next) => {
+  try {
+    const { email, username, password } = req.body;
+
+    const user = await userModel.findOne({
+      $or: [
+        { email: email },
+        { username: username },
+      ]
+    });
+
+    if (!user) {
+      return res.status(401).json('No user found');
     } else {
-        const hashedPassword = await bcrypt.hash(value.password,12)
-        value.password = hashedPassword
+      const correctPassword = bcrypt.compareSync(password, user.password);
+      if (!correctPassword) {
+        return res.status(401).json('Invalid credentials');
       }
-        const addUser = await userModel.create(value)
-        req.session.user = { id: addUser.id }
-        return res.status(201).send(addUser)
+      // Generate user sesssion
+      req.session.user = { id: user.id }
+      // Here you can generate and return a token if using JWT, or handle successful login in other ways
+      res.status(200).json({ message: 'Login successful' });
     }
-
-
-    export const getUser = async (req, res) => {
-        try {
-          const userId = req.session.user.id;
-      
-          // Get user based on the user id, excluding password and populating education
-          const userDetails = await userModel.findById(userId)
-            .select('-password')
-            .populate('education');
-      
-          if (!userDetails) {
-            return res.status(404).send('User not found');
-          }
-      
-          return res.status(200).json({ user: userDetails });
-        } catch (error) {
-          return res.status(500).send(error.message);
-        }
-      };
-      
-
-
-      export const login = async (req, res, next) => {
-        try {
-          const { email, username, password } = req.body;
-      
-          const user = await userModel.findOne({
-            $or: [
-              { email: email },
-              { username: username },
-            ]
-          });
-      
-          if (!user) {
-            return res.status(401).json('No user found');
-          } else {
-            const correctPassword = bcrypt.compareSync(password, user.password);
-            if (!correctPassword) {
-              return res.status(401).json('Invalid credentials');
-            }
-            // Generate user sesssion
-            req.session.user = { id: user.id }
-            // Here you can generate and return a token if using JWT, or handle successful login in other ways
-            res.status(200).json({ message: 'Login successful' });
-          }
-        } catch (error) {
-          next(error);
-        }
-      };
+  } catch (error) {
+    next(error);
+  }
+};

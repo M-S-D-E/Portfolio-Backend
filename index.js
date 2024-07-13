@@ -1,5 +1,8 @@
 import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
 import { configDotenv } from 'dotenv';
+import expressOasGenerator from '@mickeymond/express-oas-generator';
 import { dbconnection } from './config/db.js'; 
 import session from 'express-session';
 import { userRouter } from './routes/userRoute.js';
@@ -17,6 +20,19 @@ import MongoStore from 'connect-mongo';
 
 //creating and express app
 const app = express();
+expressOasGenerator.handleResponses(app, {
+    alwaysServeDocs:true,
+    tags: [ 'achiement'],
+    tags: [ 'user'],
+    tags: [ 'userProfile'],
+    tags: [ 'education'],
+    tags: [ 'experience'],
+    tags: [ 'volunteer'],
+    tags: [ 'skills'],
+    tags: [ 'project'],
+    mongooseModels: mongoose.modelNames(),
+  
+});
  dbconnection();
 
 
@@ -24,6 +40,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 app.use(express.static('uploads'));
 
 
@@ -36,6 +53,8 @@ app.use(session({
         mongoUrl:process.env.Mongo_uri
     })
   }));
+
+//   using routes
   app.use('/api/v1',userRouter)
   app.use('/api/v1',educationRouter);
   app.use('/api/v1',achievementRouter);
@@ -44,6 +63,9 @@ app.use(session({
   app.use('/api/v1',skillRouter);
   app.use('/api/v1',userProfileRouter);
   app.use('/api/v1',volunteerRouter);
+ 
+  expressOasGenerator.handleRequests();
+app.use((req,res) => res.redirect('/api-docs/'));
 
 
   

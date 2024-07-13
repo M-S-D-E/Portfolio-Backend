@@ -1,4 +1,5 @@
 import { Schema, model , Types} from "mongoose";
+import { toJSON } from "@reis/mongoose-to-json";
 
 const volunteeringSchema = new Schema({
     organization: { type: String },
@@ -15,4 +16,5 @@ const volunteeringSchema = new Schema({
     timestamps:true
 })
 
+volunteeringSchema.plugin(toJSON);
 export const volunteeringModel = model('Volunteering',volunteeringSchema)

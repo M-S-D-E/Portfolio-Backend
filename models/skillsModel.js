@@ -1,5 +1,6 @@
 import { Timestamp } from "mongodb";
 import { Schema, model,Types } from "mongoose";
+import { toJSON } from "@reis/mongoose-to-json";
 
 
 const skillSchema = new Schema({
@@ -11,8 +12,7 @@ const skillSchema = new Schema({
 },
 {
     timestamps:true
-}
-)
+})
 
-
+skillSchema.plugin(toJSON);
 export const skillModel = model('Skill',skillSchema)
