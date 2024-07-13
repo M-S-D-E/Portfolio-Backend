@@ -4,7 +4,7 @@ export const userProfileSchema = Joi.object({
     
         profilePicture:Joi.string().required(),
         location:Joi.string().required(),
-        maritalSatus:Joi.string().valid('single', 'married', 'prefer-not-to-say').required(),
+        maritalStatus:Joi.string().valid('single', 'married', 'prefer-not-to-say').required(),
         sex: Joi.string().valid('male', 'female').required(),
         bio:Joi.string(),
         about: Joi.string(),
@@ -13,7 +13,7 @@ export const userProfileSchema = Joi.object({
         resume:Joi.string(),
         languages:Joi.string(),
         githubLink:Joi.string(),
-        linkedinlink:Joi.string(),
+        linkedinLink:Joi.string(),
         twitterLink:Joi.string(),
-    
+        user: Joi.string().required()
 })

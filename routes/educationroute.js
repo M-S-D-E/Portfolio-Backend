@@ -9,6 +9,6 @@ educationRouter.get('/education',getAllEducation)
 
 educationRouter.get('/education/:id',getEducation)
 
-educationRouter.patch('/education/:id:educationStatus',updateEducation)
+educationRouter.patch('/education/:educationId', updateEducation);
 
-educationRouter.delete('/education/:id',deleteEducation)
+educationRouter.delete('/education/:educationId', deleteEducation);

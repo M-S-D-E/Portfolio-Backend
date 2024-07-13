@@ -1,64 +1,71 @@
-import { userProfile } from "../models/userProfile-model.js";
-import { user } from "../models/user_model.js";
+import { userProfileModel } from "../models/userProfile-model.js"; // Use userProfileModel to avoid conflicts
+import { userModel } from "../models/user_model.js"; // Use userModel to avoid conflicts
 import { userProfileSchema } from "../Schema/userProfile_schema.js";
 
-export const userProfile = async (req, res) => {
-
+// Create or update user profile
+export const addOrUpdateUserProfile = async (req, res) => {
   try {
-    const { error, value } = userProfileSchema.validate(req.body)
+    const { error, value } = userProfileSchema.validate(req.body);
     if (error) {
-      return res.status(400).send(error.details[0].message)
+      return res.status(400).send(error.details[0].message);
     }
-    // create userProfile with the value
-    const userProfile = await userProfile.create(value);
 
-    //  after,find the user with the id that you passed when creating the userProfile
-    const User = await user.findById(value.user);
+    // Find the user with the ID that you passed when creating/updating the user profile
+    const userId = value.user; // Assuming the schema includes a user field
+    const user = await userModel.findById(userId);
     if (!user) {
-      return res.status(404).send('user not found');
+      return res.status(404).send('User not found');
     }
 
-    // if you find the user,push the userProfile id you just created inside
-    user.userProfile = userProfile._id
+    // Create or update the user profile
+    let userProfile = await userProfileModel.findOneAndUpdate(
+      { user: userId }, // Find by user ID
+      value,
+      { new: true, upsert: true } // Create if not exists, return the new document
+    );
 
-    // and save the user now with the userProfile
+    // Associate the user profile with the user
+    user.userProfile = userProfile._id;
     await user.save();
 
-    // return the userProfile
+    // Return the user profile
     res.status(201).json({ userProfile });
 
   } catch (error) {
-    return res.status(500).send(error)
+    console.error('Error adding/updating user profile:', error);
+    res.status(500).send(error.message);
   }
+};
 
-}
-
-// Get all userProfile
-export const allUserProfile = async (req, res) => {
+// Get all user profiles
+export const allUserProfiles = async (req, res) => {
   try {
-    // we are fetching userProfile that belongs to a particular user
-    const userId = req.params.id
-    const allUserProfile = await userProfile.find()
-    if (allUserProfile.length == 0) {
-      return res.status(404).send('No userProfile added')
+    const allUserProfiles = await userProfileModel.find();
+    if (allUserProfiles.length === 0) {
+      return res.status(404).send('No user profiles found');
     }
-
-    res.status(200).json({ userProfile: allUserProfile })
+    res.status(200).json({ userProfiles: allUserProfiles });
   } catch (error) {
-
+    console.error('Error fetching user profiles:', error);
+    res.status(500).send(error.message);
   }
 };
 
-// Get A Single userProfile by ID
+// Get a single user profile by ID
 export const getUserProfile = async (req, res) => {
-
-  const userProfile = await userProfile.findById(req.params.id)
-
-  res.status(200).json(userProfile)
+  try {
+    const userProfile = await userProfileModel.findById(req.params.id);
+    if (!userProfile) {
+      return res.status(404).send('User profile not found');
+    }
+    res.status(200).json({ userProfile });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).send(error.message);
+  }
 };
 
-
-// Update user Profile
+// Update a user profile
 export const updateUserProfile = async (req, res) => {
   try {
     const { error, value } = userProfileSchema.validate(req.body);
@@ -66,40 +73,42 @@ export const updateUserProfile = async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const updatedUserProfile = await userProfile.findByIdAndUpdate(
+    const updatedUserProfile = await userProfileModel.findByIdAndUpdate(
       req.params.userProfileId,
       value,
       { new: true }
     );
 
     if (!updatedUserProfile) {
-      return res.status(404).send('userProfile not found');
+      return res.status(404).send('User profile not found');
     }
 
-    res.status(201).json({ userProfile: updateUserProfile });
+    res.status(200).json({ userProfile: updatedUserProfile });
   } catch (error) {
-    res.status(500).send(error);
+    console.error('Error updating user profile:', error);
+    res.status(500).send(error.message);
   }
 };
 
-// Delete  userProfile
+// Delete a user profile
 export const deleteUserProfile = async (req, res) => {
   try {
-    const deletedUserProfile = await Education.findByIdAndDelete(req.params.educationId);
+    const deletedUserProfile = await userProfileModel.findByIdAndDelete(req.params.userProfileId);
 
     if (!deletedUserProfile) {
-      return res.status(404).send('userProfile not found');
+      return res.status(404).send('User profile not found');
     }
 
-    // Remove user profile from user
-    const user = await user.findById(deletedUserProfile.user);
+    // Remove user profile reference from user
+    const user = await userModel.findById(deletedUserProfile.user);
     if (user) {
-      user.userProfile = user.userProfile.filter(userProfileId => userProfileId.toString() !== req.params.userProfileId);
+      user.userProfile = null;
       await user.save();
     }
 
-    res.status(201).json({ userProfile: deletedUserProfile });
+    res.status(200).json({ userProfile: deletedUserProfile });
   } catch (error) {
-    res.status(500).send(error);
+    console.error('Error deleting user profile:', error);
+    res.status(500).send(error.message);
   }
 };

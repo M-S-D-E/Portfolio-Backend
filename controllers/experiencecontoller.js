@@ -1,68 +1,72 @@
-import { experience, experienceModel } from "../models/experienceModel.js";
-import { user, user } from "../models/user_model.js";
-import { experience } from "../Schema/experince_Schema.js";
+import { experienceModel } from "../models/experienceModel.js";
+import { userModel } from "../models/user_model.js";
+import { experienceSchema} from "../Schema/experince_Schema.js"; // Renamed to avoid confusion
 
+// Add new experience
 export const addExperience = async (req, res) => {
     try {
-
-        const { error, value } = experience.validate(req.body)
+        const { error, value } = experienceSchema.validate(req.body);
 
         if (error) {
-            return res.status(400).send(error.details[0].message)
-
+            return res.status(400).send(error.details[0].message);
         }
-        // create experience with the value
-        const experience = await experienceModel.create(value);
 
-        // after,find the user with the id that you passed when creating the experience 
-        const User = await user.findById(value.user);
+        // Create experience with the validated data
+        const newExperience = await experienceModel.create(value);
+
+        // Find the user and associate the experience
+        const userId = req.session.user.id; // Assuming user ID is stored in session
+        const user = await userModel.findById(userId); // Fetch user using session ID
         if (!user) {
-            return res.status(404).send('user not found');
+            console.log(`User not found for ID: ${userId}`);
+            return res.status(404).send('User not found');
         }
 
-        // if you find the user,push the experience id you just created inside
-        user.experience.push(experience._id);
-
-        // and save user now with the experience
+        // Push the new experience ID to the user's experiences array
+        user.experiences.push(newExperience._id);
         await user.save();
 
-        // return the experience
-        res.status(201).json({ experience });
-
+        // Return the newly created experience
+        res.status(201).json({ experience: newExperience });
     } catch (error) {
-        return res.status(500).send(error)
+        console.error('Error adding experience:', error);
+        res.status(500).send(error.message);
     }
+};
 
-}
 
 // Get all experiences
 export const allExperiences = async (req, res) => {
     try {
-        // we are fetching experience that belongs to a particular user
-        const userId = req.params.id
-        const allExperiences = await experienceModel.find()
-        if (allExperiences.length == 0) {
-            return res.status(404).send('No Experience added')
+        const allExperiences = await experienceModel.find();
+        if (allExperiences.length === 0) {
+            return res.status(404).send('No experiences found');
         }
-
-        res.status(200).send({ experience: allExperiences })
+        res.status(200).json({ experiences: allExperiences });
     } catch (error) {
-
+        console.error('Error fetching experiences:', error);
+        res.status(500).send(error.message);
     }
 };
 
-// Get A Single experience by ID
-export const getExperience = async (req, res, next) => {
-
-    const experience = await experienceModel.findById(req.params.id)
-
-    res.status(200).json(experience)
+// Get a single experience by ID
+export const getExperience = async (req, res) => {
+    try {
+        const experience = await experienceModel.findById(req.params.id);
+        if (!experience) {
+            return res.status(404).send('Experience not found');
+        }
+        res.status(200).json({ experience });
+    } catch (error) {
+        console.error('Error fetching experience:', error);
+        res.status(500).send(error.message);
+    }
 };
 
 // Update an experience
 export const updateExperience = async (req, res) => {
     try {
-        const { error, value } = experience.validate(req.body);
+        const { error, value } = experienceSchema.validate(req.body);
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
@@ -77,13 +81,14 @@ export const updateExperience = async (req, res) => {
             return res.status(404).send('Experience not found');
         }
 
-        res.status(201).json({ experience: updatedExperience });
+        res.status(200).json({ experience: updatedExperience });
     } catch (error) {
-        res.status(500).send(error);
+        console.error('Error updating experience:', error);
+        res.status(500).send(error.message);
     }
 };
 
-// Delete  experience
+// Delete an experience
 export const deleteExperience = async (req, res) => {
     try {
         const deletedExperience = await experienceModel.findByIdAndDelete(req.params.experienceId);
@@ -93,14 +98,15 @@ export const deleteExperience = async (req, res) => {
         }
 
         // Remove experience reference from user
-        const user = await user.findById(deletedExperience.user);
+        const user = await userModel.findById(deletedExperience.user);
         if (user) {
-            user.experience = user.experience.filter(experienceId => experienceId.toString() !== req.params.experienceId);
+            user.experiences = user.experiences.filter(expId => expId.toString() !== req.params.experienceId);
             await user.save();
         }
 
-        res.status(201).json({ experience: deletedExperience });
+        res.status(200).json({ experience: deletedExperience });
     } catch (error) {
-        res.status(500).send(error);
+        console.error('Error deleting experience:', error);
+        res.status(500).send(error.message);
     }
 };

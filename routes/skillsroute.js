@@ -1,14 +1,14 @@
 import { Router } from "express";
-import {  addSkill, getSkill, getAllSkill,updateSkill, deleteSkill } from "../controllers/skillscontroller.js";
+import {  addSkill, getSkill, allSkills,updateSkill, deleteSkill } from "../controllers/skillscontroller.js";
 
 export const skillRouter = Router()
 
 skillRouter.post('/skill', addSkill)
 
-skillRouter.get('/skill',getAllSkill)
+skillRouter.get('/skill',allSkills)
 
 skillRouter.get('/skill/:id',getSkill)
 
-skillRouter.patch('/skill/:id:skillStatus',updateSkill)
+skillRouter.patch('/skill/:skillId',updateSkill)
 
-skillRouter.delete('/skill/:id',deleteSkill)
+skillRouter.delete('/skill/:skillId',deleteSkill)

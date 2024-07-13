@@ -1,69 +1,75 @@
-import { education, educationModel } from "../models/educationModel.js";
-import { user } from "../models/user_model.js";
-import { education } from "../Schema/education_Schema.js";
+import { educationModel } from "../models/educationModel.js";
+import { userModel } from "../models/user_model.js";
+import { educationSchema } from "../Schema/education_Schema.js";
 
 
+// adding education
 export const addEducation = async (req, res) => {
-
   try {
-
-    const { error, value } = education.validate(req.body)
+    const { error, value } = educationSchema.validate(req.body);
     if (error) {
-      return res.status(400).send(error.details[0].message)
+      return res.status(400).send(error.details[0].message);
     }
 
+    // Create education with the validated data
+    const newEducation = await educationModel.create(value);
 
-    //    create education with the value
-    const education = await educationModel.create(value);
-
-    //  after, find user with the id passed when creating the education
-    const User = await user.findById(value.user);
+    // Find user and associate education with the user
+    const userId = req.session.user.id; // Assuming user ID is stored in session
+    const user = await userModel.findById(userId);
     if (!user) {
-      return res.status(404).send('user not found');
+      return res.status(404).send('User not found');
     }
 
-    // if you find the user , push the education id you just created inside
-    user.education.push(education._id);
+    
+    user.education.push(newEducation._id); // Push the education ID to the user's education array
+    await user.save(); // Save the updated user
 
-    // and save the user now with the education id
-    await user.save();
-
-    // return the education
-    res.status(201).json({ education });
-
+    res.status(201).json({ education: newEducation });
   } catch (error) {
-    return res.status(500).send(error)
+    console.error('Error adding education:', error);
+    res.status(500).send(error.message);
   }
-}
+};
 
 
 
-// Get all education
-export const getallEducation = async (req, res) => {
+// getting all
+export const getAllEducation = async (req, res) => {
   try {
-    // we are fetching education that belongs to a particular user
-    const userId = req.params.id
+    const userId = req.params.id; // Assuming this is the user ID
+    const allEducation = await educationModel.find({ user: userId });
 
-    const allEducation = await educationModel.find({ user: userId })
-
-    if (allEducation.length == 0) {
-      return res.status(404).send('No Education added')
+    if (allEducation.length === 0) {
+      return res.status(404).send('No education found for this user');
     }
 
-    res.status(200).json({ education: allEducation })
+    res.status(200).json({ education: allEducation });
   } catch (error) {
-
+    console.error('Error fetching education:', error);
+    res.status(500).send(error.message);
   }
 };
 
-// Get A Single education by ID
-export const getEducation = async (req, res) => {
-  const education = await educationModel.findById(req.params.id)
 
-  res.status(200).json(education)
+// get by id
+export const getEducation = async (req, res) => {
+  try {
+    const education = await educationModel.findById(req.params.id);
+
+    if (!education) {
+      return res.status(404).send('Education not found');
+    }
+
+    res.status(200).json({ education });
+  } catch (error) {
+    console.error('Error fetching education:', error);
+    res.status(500).send(error.message);
+  }
 };
 
-// Update an education
+
+// patching
 export const updateEducation = async (req, res) => {
   try {
     const { error, value } = educationSchema.validate(req.body);
@@ -71,7 +77,7 @@ export const updateEducation = async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const updatedEducation = await Education.findByIdAndUpdate(
+    const updatedEducation = await educationModel.findByIdAndUpdate(
       req.params.educationId,
       value,
       { new: true }
@@ -81,30 +87,34 @@ export const updateEducation = async (req, res) => {
       return res.status(404).send('Education not found');
     }
 
-    res.status(201).json({ education: updatedEducation });
+    res.status(200).json({ education: updatedEducation });
   } catch (error) {
-    res.status(500).send(error);
+    console.error('Error updating education:', error);
+    res.status(500).send(error.message);
   }
 };
 
-// Delete  education
+
+
+//deleting
 export const deleteEducation = async (req, res) => {
   try {
-    const deletedEducation = await Education.findByIdAndDelete(req.params.educationId);
+    const deletedEducation = await educationModel.findByIdAndDelete(req.params.educationId);
 
     if (!deletedEducation) {
       return res.status(404).send('Education not found');
     }
 
     // Remove education reference from user
-    const user = await User.findById(deletedEducation.user);
+    const user = await userModel.findById(deletedEducation.user);
     if (user) {
       user.education = user.education.filter(educationId => educationId.toString() !== req.params.educationId);
       await user.save();
     }
 
-    res.status(201).json({ education: deletedEducation });
+    res.status(200).json({ message: 'Education deleted successfully', education: deletedEducation });
   } catch (error) {
-    res.status(500).send(error);
+    console.error('Error deleting education:', error);
+    res.status(500).send(error.message);
   }
 };

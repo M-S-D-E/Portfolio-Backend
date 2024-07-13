@@ -23,6 +23,7 @@ export const signup = async (req, res,) => {
         value.password = hashedPassword
       }
         const addUser = await userModel.create(value)
+        req.session.user = { id: addUser.id }
         return res.status(201).send(addUser)
     }
 
