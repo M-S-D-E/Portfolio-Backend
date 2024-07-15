@@ -6,19 +6,13 @@ import { checkUserSession } from "../middleware/auth.js";
 
 export const achievementRouter = Router()
 
-achievementRouter.post('/achievement',remoteUploads.fields([
-    {name:"awards",maxCount:1},
-    {name:"image",maxCount:1},
-]),checkUserSession, addAchievement)
+achievementRouter.post('/achievement',remoteUploads.single('image'),checkUserSession, addAchievement)
 
 achievementRouter.get('/achievement',checkUserSession, allAchievements)
 
 achievementRouter.get('/achievement/:id',checkUserSession,getAchievement)
 
-achievementRouter.patch('/achievements/:achievementId',remoteUploads.fields([
-    {name:"awards",maxCount:1},
-    {name:"image",maxCount:1},
-]),checkUserSession,updateAchievement)
+achievementRouter.patch('/achievements/:achievementId',remoteUploads.single('image'),checkUserSession,updateAchievement)
 
 achievementRouter.delete('/achievement/:achievementId',checkUserSession,deleteAchievement)
 

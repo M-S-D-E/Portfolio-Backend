@@ -6,8 +6,7 @@ export const addAchievement = async (req, res) => {
   try {
     const { error, value } = achievementSchema.validate({
       ...req.body,
-      awards:req.files.awards[0].filename,
-      image:req.files.image[0].filename,
+      image:req.filename,
     });
     if (error) {
       return res.status(400).send(error.details[0].message);

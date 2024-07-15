@@ -42,6 +42,12 @@ export const addOrUpdateUserProfile = async (req, res) => {
 };
 
 
+
+
+
+
+
+
 // Get all user profiles
 export const allUserProfiles = async (req, res) => {
   try {
