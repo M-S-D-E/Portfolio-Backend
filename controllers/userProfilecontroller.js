@@ -7,8 +7,8 @@ export const addOrUpdateUserProfile = async (req, res) => {
   try {
     const { error, value } = userProfileSchema.validate({
       ...req.body,
-      profilePicture:req.files.profilePicture[0].filename,
-      resume:req.files.resume[0].filename,
+      profilePicture: req.files.profilePicture[0].filename,
+      resume: req.files.resume[0].filename,
     });
 
     if (error) {
@@ -16,16 +16,15 @@ export const addOrUpdateUserProfile = async (req, res) => {
     }
 
     // Find the user with the ID that you passed when creating/updating the user profile
-    const userId = value.user; // Assuming the schema includes a user field
-    const user = await userModel.findById(userId);
+    const userSessionId = req.session.user.id; // Assuming the schema includes a user field
+    const user = await userModel.findById(userSessionId);
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-    // Create or update the user profile
     let userProfile = await userProfileModel.findOneAndUpdate(
-      { user: userId }, // Find by user ID
-      value,
+      { user: userSessionId }, // Find by user ID
+      { ...value, user: userSessionId },
       { new: true, upsert: true } // Create if not exists, return the new document
     );
 
@@ -41,6 +40,7 @@ export const addOrUpdateUserProfile = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
 
 // Get all user profiles
 export const allUserProfiles = async (req, res) => {

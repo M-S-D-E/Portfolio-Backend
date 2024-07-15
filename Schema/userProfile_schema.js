@@ -15,5 +15,5 @@ export const userProfileSchema = Joi.object({
         githubLink:Joi.string(),
         linkedinLink:Joi.string(),
         twitterLink:Joi.string(),
-        user: Joi.string().required()
+        user: Joi.string(),
 })
