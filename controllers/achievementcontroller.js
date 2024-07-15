@@ -4,7 +4,11 @@ import { achievementSchema } from "../Schema/achievement_schema.js";
 
 export const addAchievement = async (req, res) => {
   try {
-    const { error, value } = achievementSchema.validate(req.body);
+    const { error, value } = achievementSchema.validate({
+      ...req.body,
+      awards:req.files.awards[0].filename,
+      image:req.files.image[0].filename,
+    });
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
@@ -63,7 +67,11 @@ export const getAchievement = async (req, res) => {
 export const updateAchievement = async (req, res) => {
   try {
     // Validate incoming request body against achievement schema
-    const { error, value } = achievementSchema.validate(req.body);
+    const { error, value } = achievementSchema.validate({
+      ...req.body,
+      awards:req.files.awards[0].filename,
+      image:req.files.image[0].filename,
+    });
     if (error) {
       return res.status(400).send(error.details[0].message);
     }

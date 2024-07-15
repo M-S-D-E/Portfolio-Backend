@@ -15,7 +15,7 @@ const userSchema = new Schema({
         projects: [{ type: Types.ObjectId, ref: 'Project' }],
         userProfile: { type: Types.ObjectId, ref: 'UserProfile' },
         volunteering: [{ type: Types.ObjectId, ref: 'Volunteering' }],
-        experiences: [{ type: Types.ObjectId, ref: 'Experiences' }],
+        experiences: [{ type: Types.ObjectId, ref: 'Experience' }],
 },{
         timestamps:true
 })

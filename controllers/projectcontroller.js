@@ -4,7 +4,10 @@ import { projectSchema } from "../Schema/projectSchema.js";
 
 export const addProject = async (req, res) => {
     try {
-        const { error, value } = projectSchema.validate(req.body);
+        const { error, value } = projectSchema.validate({
+            ...req.body,
+            image:req.file.filename
+        });
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
@@ -62,7 +65,12 @@ export const getProject = async (req, res) => {
 // Update a project
 export const updateProject = async (req, res) => {
     try {
-        const { error, value } = projectSchema.validate(req.body);
+        const { error, value } = projectSchema.validate(
+            {
+                ...req.body,
+                image:req.file.filename
+            }
+        );
         if (error) {
             return res.status(400).send(error.details[0].message);
         }

@@ -28,41 +28,68 @@ export const signup = async (req, res,) => {
 }
 
 
-export const getUser = async (req, res) => {
+export const getUser = async (req, res, next) => {
   try {
-    const userId = req.session.user.id;
+    const userName = req.params.userName.toLowerCase();
+    console.log('welcome', userName)
 
-    // Get user based on the user id, excluding password and populating education
-    const userDetails = await userModel.findById(userId)
-      .select('-password')
-      .populate('education');
+  const options = { sort: { startDate: -1 } }
+  const userDetails = await userModel.findOne({ userName })
+    .populate({
+      path: "education",
+      options,
+    })
+    .populate("userProfile")
+    .populate("skills")
 
-    if (!userDetails) {
-      return res.status(404).send('User not found');
-    }
-    return res.status(200).json({ user: userDetails });
+    .populate({
+      path: "achievements",
+      options: { sort: { date: -1 } }, 
+    })
+    .populate({
+      path: "experiences",
+      options, 
+    })
+    .populate({
+      path: "volunteering",
+      options, 
+    })
+    .populate({
+        path: 'projects',
+        options 
+    });
 
+
+  return res.status(200).json({ user: userDetails });
   } catch (error) {
-    return res.status(500).send(error.message);
+   
+    next()
   }
 };
 
-// check if username already exist
-export const getUserNames = async (req,res) => {
-try {
-  // get query params
-  const { filter = "{}" } = req.query;
- 
- // get all users from database
-  const allUsers = await userModel
-    .find(JSON.parse(filter))
 
-     // Return response
-     res.status(200).json(allUsers);
-} catch (error) {
-  return res.status(500).send(error.message);
-}
-}
+
+export const getUsers = async (req, res) => {
+ 
+
+  const email = req.query.email?.toLowerCase()
+  const userName = req.query.userName?.toLowerCase();
+
+  const filter = {};
+  if (email) {
+    filter.email = email;
+  }
+  if (userName) {
+    filter.userName = userName;
+  }
+
+  const users = await userModel.find(filter);
+
+  return res.status(200).json({ users });
+};
+
+
+
 
 
 

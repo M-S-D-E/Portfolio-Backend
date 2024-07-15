@@ -5,7 +5,12 @@ import { userProfileSchema } from "../Schema/userProfile_schema.js";
 // Create or update user profile
 export const addOrUpdateUserProfile = async (req, res) => {
   try {
-    const { error, value } = userProfileSchema.validate(req.body);
+    const { error, value } = userProfileSchema.validate({
+      ...req.body,
+      profilePicture:req.files.profilePicture[0].filename,
+      resume:req.files.resume[0].filename,
+    });
+
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
@@ -68,7 +73,11 @@ export const getUserProfile = async (req, res) => {
 // Update a user profile
 export const updateUserProfile = async (req, res) => {
   try {
-    const { error, value } = userProfileSchema.validate(req.body);
+    const { error, value } = userProfileSchema.validate({
+      ...req.body,
+      profilePicture:req.files.profilePicture[0].filename,
+      resume:req.files.resume[0].filename,
+    });
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
