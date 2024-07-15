@@ -93,26 +93,61 @@ export const getUsers = async (req, res) => {
 
 
 
+// export const login = async (req, res, next) => {
+//   try {
+//     const { email, username, password } = req.body;
+
+//     const user = await userModel.findOne({
+//       $or: [
+//         { email: email },
+//         { username: username },
+//       ]
+//     });
+
+//     if (!user) {
+//       return res.status(401).json('No user found');
+//     } else {
+//       const correctPassword = bcrypt.compareSync(password, user.password);
+//       if (!correctPassword) {
+//         return res.status(401).json('Invalid credentials');
+//       }
+//       // Generate user sesssion
+//       req.session.user = { id: user.id }
+//       // Here you can generate and return a token if using JWT, or handle successful login in other ways
+//       res.status(200).json({ message: 'Login successful' });
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const login = async (req, res, next) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, userName, password } = req.body;
 
+    // Ensure at least email or userName and password are provided
+    if (!password || (!email && !userName)) {
+      return res.status(400).json('Email or userName and password are required');
+    }
+
+    // Find the user by email or userName
     const user = await userModel.findOne({
       $or: [
         { email: email },
-        { username: username },
+        { userName: userName },
       ]
     });
 
     if (!user) {
       return res.status(401).json('No user found');
     } else {
+      // Compare provided password with stored hashed password
       const correctPassword = bcrypt.compareSync(password, user.password);
       if (!correctPassword) {
         return res.status(401).json('Invalid credentials');
       }
-      // Generate user sesssion
-      req.session.user = { id: user.id }
+      // Generate user session
+      req.session.user = { id: user.id };
       // Here you can generate and return a token if using JWT, or handle successful login in other ways
       res.status(200).json({ message: 'Login successful' });
     }
@@ -120,3 +155,4 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
