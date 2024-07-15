@@ -56,19 +56,7 @@ export const allUserProfiles = async (req, res) => {
   }
 };
 
-// Get a single user profile by ID
-export const getUserProfile = async (req, res) => {
-  try {
-    const userProfile = await userProfileModel.findById(req.params.id);
-    if (!userProfile) {
-      return res.status(404).send('User profile not found');
-    }
-    res.status(200).json({ userProfile });
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    res.status(500).send(error.message);
-  }
-};
+
 
 // Update a user profile
 export const updateUserProfile = async (req, res) => {
@@ -99,25 +87,4 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// Delete a user profile
-export const deleteUserProfile = async (req, res) => {
-  try {
-    const deletedUserProfile = await userProfileModel.findByIdAndDelete(req.params.userProfileId);
 
-    if (!deletedUserProfile) {
-      return res.status(404).send('User profile not found');
-    }
-
-    // Remove user profile reference from user
-    const user = await userModel.findById(deletedUserProfile.user);
-    if (user) {
-      user.userProfile = null;
-      await user.save();
-    }
-
-    res.status(200).json({ userProfile: deletedUserProfile });
-  } catch (error) {
-    console.error('Error deleting user profile:', error);
-    res.status(500).send(error.message);
-  }
-};

@@ -34,7 +34,7 @@ export const getUser = async (req, res, next) => {
     console.log('welcome', userName)
 
   const options = { sort: { startDate: -1 } }
-  const userDetails = await userModel.findOne({ userName })
+  const userDetails = await userModel.findOne({ userName }).select("-password")
     .populate({
       path: "education",
       options,
