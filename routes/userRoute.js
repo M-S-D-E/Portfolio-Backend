@@ -1,4 +1,4 @@
-import { getUser, getUsers, login, signup } from "../controllers/user.js";
+import { getUser, getUsers, login, signup, token } from "../controllers/user.js";
 import { Router } from "express";
 
 
@@ -9,3 +9,4 @@ userRouter.post('/users/signup',signup);
 userRouter.get('/users/:userName', getUser),
 
 userRouter.post('/users/login',login)
+userRouter.post('/users/token',token)

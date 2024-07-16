@@ -15,8 +15,8 @@ export const addEducation = async (req, res) => {
     const newEducation = await educationModel.create(value);
 
     // Find user and associate education with the user
-    const userId = req.session.user.id; // Assuming user ID is stored in session
-    const user = await userModel.findById(userId);
+    const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
+    const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }

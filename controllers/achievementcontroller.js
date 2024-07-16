@@ -17,8 +17,8 @@ export const addAchievement = async (req, res) => {
      image: req.file.filename
     });
 
-    const userId = req.session.user.id; // Assuming user ID is stored in session
-    const user = await userModel.findById(userId);
+    const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
+    const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }

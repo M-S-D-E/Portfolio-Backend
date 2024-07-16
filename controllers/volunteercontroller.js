@@ -13,8 +13,8 @@ export const addVolunteer = async (req, res) => {
     const volunteer = await volunteeringModel.create(value);
 
     // Find the user with the ID that you passed when creating the volunteer
-    const userId = req.session.user.id;
-    const user = await userModel.findById(userId);
+    const id = req.session?.user?.id || req?.user?.id;
+    const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }

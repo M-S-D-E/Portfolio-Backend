@@ -1,17 +1,17 @@
 import { Router } from "express";
 import { addExperience, deleteExperience, getExperience,allExperiences, updateExperience } from "../controllers/experiencecontoller.js";
-import { checkUserSession } from "../middleware/auth.js";
+import {  isAuthenticated } from "../middleware/auth.js";
 
 
 
 export const experienceRouter = Router()
 
-experienceRouter.post('/experience',checkUserSession, addExperience)
+experienceRouter.post('/experience',isAuthenticated, addExperience)
 
-experienceRouter.get('/experience',checkUserSession,allExperiences)
+experienceRouter.get('/experience',isAuthenticated,allExperiences)
 
-experienceRouter.get('/experience/:id',checkUserSession,getExperience)
+experienceRouter.get('/experience/:id',isAuthenticated,getExperience)
 
-experienceRouter.patch('/experience/:experienceId',checkUserSession,updateExperience)
+experienceRouter.patch('/experience/:experienceId',isAuthenticated,updateExperience)
 
-experienceRouter.delete('/experience/:experienceId',checkUserSession,deleteExperience)
+experienceRouter.delete('/experience/:experienceId',isAuthenticated,deleteExperience)
