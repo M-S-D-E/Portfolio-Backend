@@ -1,24 +1,18 @@
 import { Router } from "express";
 import { addAchievement, deleteAchievement, getAchievement, allAchievements, updateAchievement } from "../controllers/achievementcontroller.js";
 import { remoteUploads } from "../middleware/uploads.js";
-import { checkUserSession } from "../middleware/auth.js";
+import {  isAuthenticated } from "../middleware/auth.js";
 
 
 export const achievementRouter = Router()
 
-achievementRouter.post('/achievement',remoteUploads.fields([
-    {name:"awards",maxCount:1},
-    {name:"image",maxCount:1},
-]),checkUserSession, addAchievement)
+achievementRouter.post('/achievement',remoteUploads.single('image'),isAuthenticated, addAchievement)
 
-achievementRouter.get('/achievement',checkUserSession, allAchievements)
+achievementRouter.get('/achievement',isAuthenticated, allAchievements)
 
-achievementRouter.get('/achievement/:id',checkUserSession,getAchievement)
+achievementRouter.get('/achievement/:id',isAuthenticated,getAchievement)
 
-achievementRouter.patch('/achievements/:achievementId',remoteUploads.fields([
-    {name:"awards",maxCount:1},
-    {name:"image",maxCount:1},
-]),checkUserSession,updateAchievement)
+achievementRouter.patch('/achievements/:achievementId',remoteUploads.single('image'),isAuthenticated,updateAchievement)
 
-achievementRouter.delete('/achievement/:achievementId',checkUserSession,deleteAchievement)
+achievementRouter.delete('/achievement/:achievementId',isAuthenticated,deleteAchievement)
 

@@ -16,8 +16,8 @@ export const addProject = async (req, res) => {
         const newProject = await projectModel.create(value);
 
         // Find the user with the ID passed when creating the project
-        const userId = req.session.user.id;
-        const user = await userModel.findById(userId);
+        const id = req.session.user.id || req?.user?.id
+        const user = await userModel.findById(id);
         if (!user) {
             return res.status(404).send('User not found');
         }

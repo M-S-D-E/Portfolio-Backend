@@ -6,8 +6,7 @@ export const addAchievement = async (req, res) => {
   try {
     const { error, value } = achievementSchema.validate({
       ...req.body,
-      awards:req.files.awards[0].filename,
-      image:req.files.image[0].filename,
+      image:req.filename,
     });
     if (error) {
       return res.status(400).send(error.details[0].message);
@@ -18,8 +17,8 @@ export const addAchievement = async (req, res) => {
      image: req.file.filename
     });
 
-    const userId = req.session.user.id; // Assuming user ID is stored in session
-    const user = await userModel.findById(userId);
+    const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
+    const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }
