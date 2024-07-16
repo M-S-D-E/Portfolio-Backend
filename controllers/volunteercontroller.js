@@ -42,6 +42,7 @@ export const allVolunteer = async (req, res) => {
 
     res.status(200).json({ volunteers: allVolunteers });
   } catch (error) {
+    
     return res.status(500).send(error.message);
   }
 };
@@ -50,13 +51,15 @@ export const allVolunteer = async (req, res) => {
 export const getVolunteer = async (req, res) => {
   try {
     const volunteer = await volunteeringModel.findById(req.params.volunteerId);
+
     if (!volunteer) {
-      return res.status(404).send('Volunteer not found');
+      return res.status(404).json({ message: 'Volunteer not found' });
     }
 
     res.status(200).json(volunteer);
   } catch (error) {
-    return res.status(500).send(error.message);
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ message: 'An error occurred while fetching volunteer' });
   }
 };
 

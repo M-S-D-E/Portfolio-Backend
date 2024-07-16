@@ -61,9 +61,10 @@ export const getUser = async (req, res, next) => {
 
 
   return res.status(200).json({ user: userDetails });
+ 
   } catch (error) {
    
-    next()
+    next(error)
   }
 };
 

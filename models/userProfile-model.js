@@ -5,7 +5,7 @@ import { toJSON } from "@reis/mongoose-to-json";
 const userProfile = new Schema({
     profilePicture: { type: String },
     location: { type: String },
-    maritalSatus: { type: String, enum: ['single', 'married', 'prefer-not-to-say'], },
+    maritalStatus: { type: String, enum: ['single', 'married', 'prefer-not-to-say'], },
     sex: { type: String, enum: ['male', 'female'] },
     bio: { type: String },
     about: { type: String },

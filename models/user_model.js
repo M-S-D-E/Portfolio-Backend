@@ -13,7 +13,7 @@ const userSchema = new Schema({
         skills: [{ type: Types.ObjectId, ref: 'Skill' }],
         achievements: [{ type: Types.ObjectId, ref: 'Achievement' }],
         projects: [{ type: Types.ObjectId, ref: 'Project' }],
-        userProfile: { type: Types.ObjectId, ref: 'UserProfile' },
+        userProfile: { type: Types.ObjectId, ref: 'Profile' },
         volunteering: [{ type: Types.ObjectId, ref: 'Volunteering' }],
         experiences: [{ type: Types.ObjectId, ref: 'Experience' }],
 },{
