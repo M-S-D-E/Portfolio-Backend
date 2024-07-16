@@ -23,7 +23,7 @@ import MongoStore from 'connect-mongo';
 const app = express();
 expressOasGenerator.handleResponses(app, {
     alwaysServeDocs:true,
-    tags: [ 'achievement','user', 'userProfile','education','experience','volunteer','skills','project'],
+    tags: [ 'achievement','user', 'userProfile','education','experience','volunteer','skill','project'],
    
     mongooseModels: mongoose.modelNames(),
   
