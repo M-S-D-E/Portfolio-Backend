@@ -15,8 +15,9 @@ export const addExperience = async (req, res) => {
         const newExperience = await experienceModel.create(value);
 
         // Find the user and associate the experience
-        const userId = req.session.user.id; // Assuming user ID is stored in session
-        const user = await userModel.findById(userId); // Fetch user using session ID
+        const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
+        // Assuming user ID is stored in session
+        const user = await userModel.findById(id); // Fetch user using session ID
         if (!user) {
             console.log(`User not found for ID: ${userId}`);
             return res.status(404).send('User not found');

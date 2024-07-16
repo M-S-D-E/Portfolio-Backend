@@ -16,15 +16,15 @@ export const addOrUpdateUserProfile = async (req, res) => {
     }
 
     // Find the user with the ID that you passed when creating/updating the user profile
-    const userSessionId = req.session.user.id; // Assuming the schema includes a user field
-    const user = await userModel.findById(userSessionId);
+    const id = req.session?.user?.id || req?.user?.id // Assuming the schema includes a user field
+    const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     let userProfile = await userProfileModel.findOneAndUpdate(
-      { user: userSessionId }, // Find by user ID
-      { ...value, user: userSessionId },
+      { user: id }, // Find by user ID
+      { ...value, user: id },
       { new: true, upsert: true } // Create if not exists, return the new document
     );
 
@@ -48,17 +48,19 @@ export const addOrUpdateUserProfile = async (req, res) => {
 
 
 
-// Get all user profiles
-export const allUserProfiles = async (req, res) => {
+// Get user profiles
+export const getUserProfile = async (req, res) => {
   try {
-    const allUserProfiles = await userProfileModel.find();
-    if (allUserProfiles.length === 0) {
-      return res.status(404).send('No user profiles found');
+
+    const id = req.session?.user?.id || req?.user?.id;
+
+    const profile = await userProfileModel.findOne({ user: id });
+    if (!profile) {
+      return res.status(404).send("No profile added");
     }
-    res.status(200).json({ userProfiles: allUserProfiles });
+    res.status(200).json({ profile });
   } catch (error) {
-    console.error('Error fetching user profiles:', error);
-    res.status(500).send(error.message);
+    return res.json({ error })
   }
 };
 
@@ -69,8 +71,8 @@ export const updateUserProfile = async (req, res) => {
   try {
     const { error, value } = userProfileSchema.validate({
       ...req.body,
-      profilePicture:req.files.profilePicture[0].filename,
-      resume:req.files.resume[0].filename,
+      profilePicture: req.files.profilePicture[0].filename,
+      resume: req.files.resume[0].filename,
     });
     if (error) {
       return res.status(400).send(error.details[0].message);

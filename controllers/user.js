@@ -1,6 +1,8 @@
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import { userModel } from "../models/user_model.js";
 import { userSchema } from "../Schema/user_schema.js";
-import bcrypt from 'bcrypt'
+
 
 
 
@@ -93,39 +95,6 @@ export const getUsers = async (req, res) => {
   return res.status(200).json({ users });
 };
 
-
-
-
-
-
-// export const login = async (req, res, next) => {
-//   try {
-//     const { email, username, password } = req.body;
-
-//     const user = await userModel.findOne({
-//       $or: [
-//         { email: email },
-//         { username: username },
-//       ]
-//     });
-
-//     if (!user) {
-//       return res.status(401).json('No user found');
-//     } else {
-//       const correctPassword = bcrypt.compareSync(password, user.password);
-//       if (!correctPassword) {
-//         return res.status(401).json('Invalid credentials');
-//       }
-//       // Generate user sesssion
-//       req.session.user = { id: user.id }
-//       // Here you can generate and return a token if using JWT, or handle successful login in other ways
-//       res.status(200).json({ message: 'Login successful' });
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 export const login = async (req, res, next) => {
   try {
     const { email, userName, password } = req.body;
@@ -155,6 +124,52 @@ export const login = async (req, res, next) => {
       req.session.user = { id: user.id };
       // Here you can generate and return a token if using JWT, or handle successful login in other ways
       res.status(200).json({ message: 'Login successful' });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+// token authenticaton
+
+export const token= async (req, res, next) => {
+  try {
+    const { email, userName, password } = req.body;
+
+    // Ensure at least email or userName and password are provided
+    if (!password || (!email && !userName)) {
+      return res.status(400).json('Email or userName and password are required');
+    }
+
+    // Find the user by email or userName
+    const user = await userModel.findOne({
+      $or: [
+        { email: email },
+        { userName: userName },
+      ]
+    });
+
+    if (!user) {
+      return res.status(401).json('No user found');
+    } else {
+      // Compare provided password with stored hashed password
+      const correctPassword = bcrypt.compareSync(password, user.password);
+      if (!correctPassword) {
+        return res.status(401).json('Invalid credentials');
+      }
+      // Generate user token
+    const token = jwt.sign(
+      {id:user.id}, 
+      process.env.JWT_PRIVATE_KEY,
+      {expiresIn:'1h'}
+    )
+      // Here you can generate and return a token if using JWT, or handle successful login in other ways
+      res.status(200).json({ 
+        message: 'Login successful' ,
+       acessToken:token
+      });
     }
   } catch (error) {
     next(error);
