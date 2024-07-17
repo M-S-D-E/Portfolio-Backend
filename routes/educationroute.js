@@ -5,12 +5,12 @@ import { isAuthenticated } from "../middleware/auth.js";
 
 export const educationRouter = Router()
 
-educationRouter.post('/users/educations',isAuthenticated,addEducation)
+educationRouter.post('/users/education',isAuthenticated,addEducation)
 
-educationRouter.get('/users/educations',isAuthenticated,getAllEducation)
+educationRouter.get('/users/education',isAuthenticated,getAllEducation)
 
-educationRouter.get('/users/educations/:id',isAuthenticated,getEducation)
+educationRouter.get('/users/education/:id',isAuthenticated,getEducation)
 
-educationRouter.patch('/users/educations/:educationId',isAuthenticated, updateEducation);
+educationRouter.patch('/users/education/:educationId',isAuthenticated, updateEducation);
 
-educationRouter.delete('/users/educations/:educationId',isAuthenticated, deleteEducation);
+educationRouter.delete('/users/education/:educationId',isAuthenticated, deleteEducation);
