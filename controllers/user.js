@@ -12,8 +12,9 @@ export const signup = async (req, res,) => {
   if (error) {
     return res.status(400).send(error.details[0].message)
   }
+  const lastName = value.lastName
   const email = value.email
-  console.log('email', email)
+  console.log('Welcome', lastName)
 
   const findIfUserExit = await userModel.findOne({ email })
 
@@ -176,3 +177,15 @@ export const token= async (req, res, next) => {
   }
 };
 
+// logout
+
+export const logout = async (req, res, next) => {
+  try {
+    // Destroy user session
+    await req.session.destroy();
+    // Return response
+    res.status(200).json("User logged out");
+  } catch (error) {
+    next(error);
+  }
+};
