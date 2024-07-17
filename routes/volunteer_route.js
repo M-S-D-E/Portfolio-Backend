@@ -5,12 +5,12 @@ import {  isAuthenticated } from "../middleware/auth.js";
 
 export const volunteerRouter = Router();
 
-volunteerRouter.post('/users/volunteer', isAuthenticated,addVolunteer);
+volunteerRouter.post('/users/volunteering', isAuthenticated,addVolunteer);
 
-volunteerRouter.get('/users/volunteer',isAuthenticated,allVolunteer);
+volunteerRouter.get('/users/volunteering',isAuthenticated,allVolunteer);
 
-volunteerRouter.get('/users/volunteer/:volunteerId',isAuthenticated,getVolunteer);
+volunteerRouter.get('/users/volunteering/:volunteerId',isAuthenticated,getVolunteer);
 
-volunteerRouter.patch('/users/volunteer/:volunteerId', isAuthenticated,updateVolunteer);
+volunteerRouter.patch('/users/volunteering/:volunteerId', isAuthenticated,updateVolunteer);
 
-volunteerRouter.delete('/users/volunteer/:volunteerId',isAuthenticated, deleteVolunteer);
+volunteerRouter.delete('/users/volunteering/:volunteerId',isAuthenticated, deleteVolunteer);
