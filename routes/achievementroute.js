@@ -6,13 +6,13 @@ import {  isAuthenticated } from "../middleware/auth.js";
 
 export const achievementRouter = Router()
 
-achievementRouter.post('/achievement',remoteUploads.single('image'),isAuthenticated, addAchievement)
+achievementRouter.post('/users/achievement',remoteUploads.single('image'),isAuthenticated, addAchievement)
 
-achievementRouter.get('/achievement',isAuthenticated, allAchievements)
+achievementRouter.get('/users/achievement',isAuthenticated, allAchievements)
 
-achievementRouter.get('/achievement/:id',isAuthenticated,getAchievement)
+achievementRouter.get('/users/achievement/:id',isAuthenticated,getAchievement)
 
-achievementRouter.patch('/achievements/:achievementId',remoteUploads.single('image'),isAuthenticated,updateAchievement)
+achievementRouter.patch('/users/achievements/:achievementId',remoteUploads.single('image'),isAuthenticated,updateAchievement)
 
-achievementRouter.delete('/achievement/:achievementId',isAuthenticated,deleteAchievement)
+achievementRouter.delete('/users/achievement/:achievementId',isAuthenticated,deleteAchievement)
 

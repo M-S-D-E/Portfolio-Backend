@@ -5,16 +5,16 @@ import {  isAuthenticated } from "../middleware/auth.js";
 
 export const userProfileRouter = Router();
 
-userProfileRouter.post('/userProfile', remoteUploads.fields([
+userProfileRouter.post('/users/userProfile', remoteUploads.fields([
     { name: "profilePicture", maxCount: 1 },
     { name: "resume", maxCount: 1 },
 ]), isAuthenticated, addOrUpdateUserProfile);
 
-userProfileRouter.get('/userProfile', isAuthenticated, getUserProfile);
+userProfileRouter.get('/users/userProfile', isAuthenticated, getUserProfile);
 
 
 
-userProfileRouter.patch('/userProfile/:userProfileId', remoteUploads.fields([
+userProfileRouter.patch('/users/userProfile/:userProfileId', remoteUploads.fields([
     { name: "profilePicture", maxCount: 1 },
     { name: "resume", maxCount: 1 },
 ]), isAuthenticated, updateUserProfile);

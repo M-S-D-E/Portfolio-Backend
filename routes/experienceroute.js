@@ -6,12 +6,12 @@ import {  isAuthenticated } from "../middleware/auth.js";
 
 export const experienceRouter = Router()
 
-experienceRouter.post('/experience',isAuthenticated, addExperience)
+experienceRouter.post('/users/experience',isAuthenticated, addExperience)
 
-experienceRouter.get('/experience',isAuthenticated,allExperiences)
+experienceRouter.get('/users/experience',isAuthenticated,allExperiences)
 
-experienceRouter.get('/experience/:id',isAuthenticated,getExperience)
+experienceRouter.get('/users/experience/:id',isAuthenticated,getExperience)
 
-experienceRouter.patch('/experience/:experienceId',isAuthenticated,updateExperience)
+experienceRouter.patch('/users/experience/:experienceId',isAuthenticated,updateExperience)
 
-experienceRouter.delete('/experience/:experienceId',isAuthenticated,deleteExperience)
+experienceRouter.delete('/users/experience/:experienceId',isAuthenticated,deleteExperience)
