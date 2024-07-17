@@ -5,12 +5,12 @@ import { remoteUploads } from "../middleware/uploads.js";
 
 export const projectRouter = Router()
 
-projectRouter.post('/users/project', remoteUploads.single('image'),isAuthenticated,addProject)
+projectRouter.post('/users/projects', remoteUploads.single('image'),isAuthenticated,addProject)
 
-projectRouter.get('/users/project',isAuthenticated,allProjects)
+projectRouter.get('/users/projects',isAuthenticated,allProjects)
 
-projectRouter.get('/users/project/:id',isAuthenticated, getProject)
+projectRouter.get('/users/projects/:id',isAuthenticated, getProject)
 
-projectRouter.patch('/users/project/:projectId',remoteUploads.single('image'),isAuthenticated,updateProject)
+projectRouter.patch('/users/projects/:projectId',remoteUploads.single('image'),isAuthenticated,updateProject)
 
-projectRouter.delete('/users/project/:projectId',isAuthenticated,deleteProject)
+projectRouter.delete('/users/projects/:projectId',isAuthenticated,deleteProject)

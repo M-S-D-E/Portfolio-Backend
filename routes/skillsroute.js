@@ -4,12 +4,12 @@ import { isAuthenticated } from "../middleware/auth.js";
 
 export const skillRouter = Router()
 
-skillRouter.post('/users/skill',isAuthenticated, addSkill)
+skillRouter.post('/users/skills',isAuthenticated, addSkill)
 
-skillRouter.get('/users/skill',isAuthenticated,allSkills)
+skillRouter.get('/users/skills',isAuthenticated,allSkills)
 
-skillRouter.get('/users/skill/:id',isAuthenticated,getSkill)
+skillRouter.get('/users/skills/:id',isAuthenticated,getSkill)
 
-skillRouter.patch('/users/skill/:skillId',isAuthenticated,updateSkill)
+skillRouter.patch('/users/skills/:skillId',isAuthenticated,updateSkill)
 
-skillRouter.delete('/users/skill/:skillId',isAuthenticated,deleteSkill)
+skillRouter.delete('/users/skills/:skillId',isAuthenticated,deleteSkill)
