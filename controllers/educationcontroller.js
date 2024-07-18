@@ -10,18 +10,16 @@ export const addEducation = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-
-    // Create education with the validated data
-    const newEducation = await educationModel.create(value);
-
-    // Find user and associate education with the user
     const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
     const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }
+    // Create education with the validated data
 
-    
+    const newEducation = await educationModel.create({...value, user:user.id});
+
+    // Find user and associate education with the user
     user.education.push(newEducation._id); // Push the education ID to the user's education array
     await user.save(); // Save the updated user
 
@@ -51,25 +49,38 @@ export const getAllEducation = async (req, res) => {
       res.status(200).json({ education: allEducation });
   } catch (error) {
       console.error('Error fetching education:', error);
-      res.status(500).send(error.message);
+      res.status(500).send('Internal Server Error');
   }
 };
 
 // get by id
 export const getEducation = async (req, res) => {
   try {
-    const education = await educationModel.findById(req.params.id);
+    // Extract the user ID from the session or token
+    const userId = req.session?.user?.id || req?.user?.id;
 
+    // If no user ID is found, return an unauthorized error
+    if (!userId) {
+      return res.status(401).send('Unauthorized: No user ID found in session or token');
+    }
+
+    // Find the education record by ID and user ID
+    const education = await educationModel.findOne({ _id: req.params.id, user: userId });
+
+    // If the education record is not found, return a 404 error
     if (!education) {
       return res.status(404).send('Education not found');
     }
 
+    // Return the education record
     res.status(200).json({ education });
   } catch (error) {
+    // Log and return a server error
     console.error('Error fetching education:', error);
     res.status(500).send(error.message);
   }
 };
+
 
 
 // patching

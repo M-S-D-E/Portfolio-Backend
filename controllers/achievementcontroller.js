@@ -11,17 +11,18 @@ export const addAchievement = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-
-    const newAchievement = await achievementModel.create({
-      ...value,
-     image: req.file.filename
-    });
-
     const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
     const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }
+    const newAchievement = await achievementModel.create({
+      ...value,
+     image: req.file.filename,
+     user:id,
+    });
+
+    
 
     user.achievements.push(newAchievement._id);
     await user.save();
@@ -36,7 +37,7 @@ export const addAchievement = async (req, res) => {
 // Get all achievements
 export const allAchievements = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.session?.user?.id || req?.user?.id;
     const allAchievements = await achievementModel.find({ user: userId });
     if (allAchievements.length === 0) {
       return res.status(404).send('No achievements added');
@@ -51,16 +52,27 @@ export const allAchievements = async (req, res) => {
 // Get a single achievement by ID
 export const getAchievement = async (req, res) => {
   try {
-    const achievement = await achievementModel.findById(req.params.id);
+    // Extract the user ID from the session or token
+    const userId = req.session?.user?.id || req?.user?.id;
+    // If no user ID is found, return an unauthorized error
+    if (!userId) {
+      return res.status(401).send('Unauthorized: No user ID found in session or token');
+    }
+    // Find the achievement record by ID and user ID
+    const achievement = await achievementModel.findOne({ _id: req.params.id, user: userId });
+    // If the achievement record is not found, return a 404 error
     if (!achievement) {
       return res.status(404).send('Achievement not found');
     }
+    // Return the achievement record
     res.status(200).json(achievement);
   } catch (error) {
+    // Log and return a server error
     console.error('Error fetching achievement:', error);
     res.status(500).send(error.message);
   }
 };
+
 
 // Update an achievement
 export const updateAchievement = async (req, res) => {

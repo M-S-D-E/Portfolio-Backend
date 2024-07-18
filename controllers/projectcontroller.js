@@ -11,16 +11,16 @@ export const addProject = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-
-        // Create project with the validated data
-        const newProject = await projectModel.create(value);
-
-        // Find the user with the ID passed when creating the project
         const id = req.session.user.id || req?.user?.id
         const user = await userModel.findById(id);
         if (!user) {
             return res.status(404).send('User not found');
         }
+        // Create project with the validated data
+        const newProject = await projectModel.create({...value,user:id});
+
+        // Find the user with the ID passed when creating the project
+       
 
         // Push the new project ID to the user's projects array
         user.projects.push(newProject._id);  
@@ -37,7 +37,11 @@ export const addProject = async (req, res) => {
 // Get all projects
 export const allProjects = async (req, res) => {
     try {
-        const allProjects = await projectModel.find();
+        const userId = req.session?.user?.id || req?.user?.id;
+        if (!userId) {
+            return res.status(401).send('Unauthorized: User ID is missing');
+        }
+        const allProjects = await projectModel.find({ user: userId });
         if (allProjects.length === 0) {
             return res.status(404).send('No projects found');
         }
@@ -51,7 +55,11 @@ export const allProjects = async (req, res) => {
 // Get a single project by ID
 export const getProject = async (req, res) => {
     try {
-        const project = await projectModel.findById(req.params.id);
+        const userId = req.session?.user?.id || req?.user?.id;
+        if (!userId) {
+            return res.status(401).send('Unauthorized: No user ID found in session or token');
+        }
+        const project = await projectModel.findOne({ _id: req.params.id, user: userId });
         if (!project) {
             return res.status(404).send('Project not found');
         }

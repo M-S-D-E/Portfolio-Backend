@@ -8,16 +8,15 @@ export const addVolunteer = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-
-    // Create volunteer with the value
-    const volunteer = await volunteeringModel.create(value);
-
     // Find the user with the ID that you passed when creating the volunteer
     const id = req.session?.user?.id || req?.user?.id;
     const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).send('User not found');
     }
+
+    // Create volunteer with the value
+    const volunteer = await volunteeringModel.create({ ...value, user: user.id })
 
     // Push the volunteer ID you just created into the user's volunteer array
     user.volunteering.push(volunteer._id);
@@ -35,14 +34,18 @@ export const addVolunteer = async (req, res) => {
 // Get all volunteers
 export const allVolunteer = async (req, res) => {
   try {
-    const allVolunteers = await volunteeringModel.find();
+    const userId = req.session?.user?.id || req?.user?.id;
+    if (!userId) {
+        return res.status(401).send('Unauthorized: User ID is missing');
+    }
+    const allVolunteers = await volunteeringModel.find({user:userId});
     if (allVolunteers.length === 0) {
       return res.status(404).send('No Volunteer added');
     }
 
     res.status(200).json({ volunteers: allVolunteers });
   } catch (error) {
-    
+
     return res.status(500).send(error.message);
   }
 };
