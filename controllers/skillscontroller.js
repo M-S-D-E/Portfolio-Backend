@@ -61,7 +61,7 @@ export const getSkill = async (req, res) => {
     if (!skill) {
       return res.status(404).send('Skill not found');
     }
-    res.status(200).json({ skill });
+    res.status(200).json({ skill ,message:"Skills Added Sucessfully"});
   } catch (error) {
     console.error('Error fetching skill:', error);
     res.status(500).send(error.message);
@@ -86,7 +86,7 @@ export const updateSkill = async (req, res) => {
       return res.status(404).send('Skill not found');
     }
 
-    res.status(200).json({ skill: updatedSkill });
+    res.status(200).json({ skill: updatedSkill , message:"Skills Updated Sucessfully" });
   } catch (error) {
     console.error('Error updating skill:', error);
     res.status(500).send(error.message);
@@ -109,7 +109,7 @@ export const deleteSkill = async (req, res) => { // Corrected to deleteSkill
       await user.save();
     }
 
-    res.status(200).json({ skill: deletedSkill });
+    res.status(200).json({ skill: deletedSkill, message:"Skills Deleted Sucessfully" });
   } catch (error) {
     console.error('Error deleting skill:', error);
     res.status(500).send(error.message);

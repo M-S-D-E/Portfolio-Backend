@@ -23,7 +23,9 @@ export const addEducation = async (req, res) => {
     user.education.push(newEducation._id); // Push the education ID to the user's education array
     await user.save(); // Save the updated user
 
-    res.status(201).json({ education: newEducation });
+    res.status(201).json({ education: newEducation ,
+      message:"Education added sucessfully",
+    });
   } catch (error) {
     console.error('Error adding education:', error);
     res.status(500).send(error.message);
@@ -73,7 +75,9 @@ export const getEducation = async (req, res) => {
     }
 
     // Return the education record
-    res.status(200).json({ education });
+    res.status(200).json({ education ,
+      message:"Education updated sucessfully",
+    });
   } catch (error) {
     // Log and return a server error
     console.error('Error fetching education:', error);
@@ -101,7 +105,9 @@ export const updateEducation = async (req, res) => {
       return res.status(404).send('Education not found');
     }
 
-    res.status(200).json({ education: updatedEducation });
+    res.status(200).json({ education: updatedEducation ,
+      message:"Education deleted sucessfully",
+    });
   } catch (error) {
     console.error('Error updating education:', error);
     res.status(500).send(error.message);

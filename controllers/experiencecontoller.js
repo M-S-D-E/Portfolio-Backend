@@ -44,7 +44,9 @@ export const allExperiences = async (req, res) => {
         // if (allExperiences.length === 0) {
         //     return res.status(404).send('No experiences found');
         // }
-        res.status(200).json({ experiences: allExperiences });
+        res.status(200).json({ experiences: allExperiences ,
+            message:"Experience added sucessfully",
+        });
     } catch (error) {
         console.error('Error fetching experiences:', error);
         res.status(500).send(error.message);
@@ -87,7 +89,9 @@ export const updateExperience = async (req, res) => {
             return res.status(404).send('Experience not found');
         }
 
-        res.status(200).json({ experience: updatedExperience });
+        res.status(200).json({ experience: updatedExperience,
+            message:"Experience updated sucessfully",
+         });
     } catch (error) {
         console.error('Error updating experience:', error);
         res.status(500).send(error.message);
@@ -110,7 +114,9 @@ export const deleteExperience = async (req, res) => {
             await user.save();
         }
 
-        res.status(200).json({ experience: deletedExperience });
+        res.status(200).json({ experience: deletedExperience ,
+            message:"Experience deleted sucessfully",
+        });
     } catch (error) {
         console.error('Error deleting experience:', error);
         res.status(500).send(error.message);

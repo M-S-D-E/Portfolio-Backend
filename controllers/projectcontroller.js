@@ -27,7 +27,9 @@ export const addProject = async (req, res) => {
         await user.save();
 
         // Return the newly created project
-        res.status(201).json({ project: newProject });
+        res.status(201).json({ project: newProject,
+            message:"Project added sucessfully",
+         });
     } catch (error) {
         console.error('Error adding project:', error);
         return res.status(500).send(error.message);
@@ -93,7 +95,9 @@ export const updateProject = async (req, res) => {
             return res.status(404).send('Project not found');
         }
 
-        res.status(200).json({ project: updatedProject });
+        res.status(200).json({ project: updatedProject,
+            message:"Project Updated Sucessfully",
+         });
     } catch (error) {
         console.error('Error updating project:', error);
         res.status(500).send(error.message);
@@ -116,7 +120,9 @@ export const deleteProject = async (req, res) => {
             await user.save();
         }
 
-        res.status(200).json({ project: deletedProject });
+        res.status(200).json({ project: deletedProject ,
+            message:"Project Deleted Sucessfully",
+        });
     } catch (error) {
         console.error('Error deleting project:', error);
         res.status(500).send(error.message);
