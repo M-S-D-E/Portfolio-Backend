@@ -37,20 +37,23 @@ export const addEducation = async (req, res) => {
 // getting all
 export const getAllEducation = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming this is the user ID
-    const allEducation = await educationModel.find({ user: userId });
+      const userId = req.session?.user?.id || req?.user?.id;
+      if (!userId) {
+          return res.status(401).send('Unauthorized: User ID is missing');
+      }
 
-    if (allEducation.length === 0) {
-      return res.status(404).send('No education found for this user');
-    }
+      const allEducation = await educationModel.find({ user: userId });
 
-    res.status(200).json({ education: allEducation });
+      if (allEducation.length === 0) {
+          return res.status(404).send('No education found for this user');
+      }
+
+      res.status(200).json({ education: allEducation });
   } catch (error) {
-    console.error('Error fetching education:', error);
-    res.status(500).send(error.message);
+      console.error('Error fetching education:', error);
+      res.status(500).send(error.message);
   }
 };
-
 
 // get by id
 export const getEducation = async (req, res) => {

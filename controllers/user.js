@@ -14,7 +14,7 @@ export const signup = async (req, res,) => {
   }
   const lastName = value.lastName
   const email = value.email
-  console.log('Welcome', lastName)
+  // console.log('Welcome', lastName)
 
   const findIfUserExit = await userModel.findOne({ email })
 
@@ -27,7 +27,9 @@ export const signup = async (req, res,) => {
   }
   const addUser = await userModel.create(value)
   req.session.user = { id: addUser.id }
-  return res.status(201).send(addUser)
+  return res.status(201).send({
+    message:"user created sucessfully"
+  })
 }
 
 
