@@ -8,16 +8,17 @@ export const addSkill = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
+     // Find the user with the id that you passed when creating the skill
+     const id = req.session?.user?.id || req?.user?.id
+     const user = await userModel.findById(id); // Use userModel
+     if (!user) {
+       // console.log(`User not found for ID: ${userId}`);
+       return res.status(404).send('User not found');
+     }
     // Create skill with the value
-    const skill = await skillModel.create(value);
+    const skill = await skillModel.create({...value,user:id});
 
-    // Find the user with the id that you passed when creating the skill
-    const id = req.session?.user?.id || req?.user?.id
-    const user = await userModel.findById(id); // Use userModel
-    if (!user) {
-      // console.log(`User not found for ID: ${userId}`);
-      return res.status(404).send('User not found');
-    }
+   
 
     // If you find the user, push the skill id you just created inside
     user.skills.push(skill._id); // Use skills instead of skill
@@ -34,7 +35,11 @@ export const addSkill = async (req, res) => {
 // Get all skills
 export const allSkills = async (req, res) => { // Renamed to allSkills
   try {
-    const allSkills = await skillModel.find();
+    const userId = req.session?.user?.id || req?.user?.id;
+    if (!userId) {
+        return res.status(401).send('Unauthorized: User ID is missing');
+    }
+    const allSkills = await skillModel.find({ user: userId });
     if (allSkills.length === 0) {
       return res.status(404).send('No skills added');
     }
@@ -48,7 +53,11 @@ export const allSkills = async (req, res) => { // Renamed to allSkills
 // Get a single skill by ID
 export const getSkill = async (req, res) => {
   try {
-    const skill = await skillModel.findById(req.params.id);
+    const userId = req.session?.user?.id || req?.user?.id;
+        if (!userId) {
+            return res.status(401).send('Unauthorized: No user ID found in session or token');
+        }
+    const skill = await skillModel.findOne({ _id: req.params.id, user: userId });
     if (!skill) {
       return res.status(404).send('Skill not found');
     }

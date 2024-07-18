@@ -11,22 +11,19 @@ export const addExperience = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
 
-        // Create experience with the validated data
-        const newExperience = await experienceModel.create(value);
-
         // Find the user and associate the experience
         const id = req.session?.user?.id || req?.user?.id; // Assuming user ID is stored in session
         // Assuming user ID is stored in session
         const user = await userModel.findById(id); // Fetch user using session ID
         if (!user) {
-            console.log(`User not found for ID: ${userId}`);
             return res.status(404).send('User not found');
         }
+        // Create experience with the validated data
+        const newExperience = await experienceModel.create({...value,user:user.id});
 
         // Push the new experience ID to the user's experiences array
         user.experiences.push(newExperience._id);
         await user.save();
-
         // Return the newly created experience
         res.status(201).json({ experience: newExperience });
     } catch (error) {
@@ -39,7 +36,11 @@ export const addExperience = async (req, res) => {
 // Get all experiences
 export const allExperiences = async (req, res) => {
     try {
-        const allExperiences = await experienceModel.find();
+        const userId = req.session?.user?.id || req?.user?.id;
+      if (!userId) {
+          return res.status(401).send('Unauthorized: User ID is missing');
+      }
+        const allExperiences = await experienceModel.find({ user: userId });
         if (allExperiences.length === 0) {
             return res.status(404).send('No experiences found');
         }
@@ -53,7 +54,11 @@ export const allExperiences = async (req, res) => {
 // Get a single experience by ID
 export const getExperience = async (req, res) => {
     try {
-        const experience = await experienceModel.findById(req.params.id);
+        const userId = req.session?.user?.id || req?.user?.id;
+        if (!userId) {
+            return res.status(401).send('Unauthorized: No user ID found in session or token');
+        }
+        const experience = await experienceModel.findOne({ _id: req.params.id, user: userId })
         if (!experience) {
             return res.status(404).send('Experience not found');
         }
