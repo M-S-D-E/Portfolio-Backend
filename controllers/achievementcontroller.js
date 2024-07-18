@@ -39,9 +39,9 @@ export const allAchievements = async (req, res) => {
   try {
     const userId = req.session?.user?.id || req?.user?.id;
     const allAchievements = await achievementModel.find({ user: userId });
-    if (allAchievements.length === 0) {
-      return res.status(404).send('No achievements added');
-    }
+    // if (allAchievements.length === 0) {
+    //   return res.status(404).send('No achievements added');
+    // }
     res.status(200).json({ achievements: allAchievements });
   } catch (error) {
     console.error('Error fetching achievements:', error);

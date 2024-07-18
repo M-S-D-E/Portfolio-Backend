@@ -42,9 +42,9 @@ export const getAllEducation = async (req, res) => {
 
       const allEducation = await educationModel.find({ user: userId });
 
-      if (allEducation.length === 0) {
-          return res.status(404).send('No education found for this user');
-      }
+      // if (allEducation.length === 0) {
+      //     return res.status(404).send('No education found for this user');
+      // }
 
       res.status(200).json({ education: allEducation });
   } catch (error) {

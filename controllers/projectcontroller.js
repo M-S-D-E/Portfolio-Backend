@@ -42,9 +42,9 @@ export const allProjects = async (req, res) => {
             return res.status(401).send('Unauthorized: User ID is missing');
         }
         const allProjects = await projectModel.find({ user: userId });
-        if (allProjects.length === 0) {
-            return res.status(404).send('No projects found');
-        }
+        // if (allProjects.length === 0) {
+        //     return res.status(404).send('No projects found');
+        // }
         res.status(200).json({ projects: allProjects });
     } catch (error) {
         console.error('Error fetching projects:', error);

@@ -39,9 +39,9 @@ export const allVolunteer = async (req, res) => {
         return res.status(401).send('Unauthorized: User ID is missing');
     }
     const allVolunteers = await volunteeringModel.find({user:userId});
-    if (allVolunteers.length === 0) {
-      return res.status(404).send('No Volunteer added');
-    }
+    // if (allVolunteers.length === 0) {
+    //   return res.status(404).send('No Volunteer added');
+    // }
 
     res.status(200).json({ volunteers: allVolunteers });
   } catch (error) {
