@@ -166,7 +166,7 @@ export const token= async (req, res, next) => {
     const token = jwt.sign(
       {id:user.id}, 
       process.env.JWT_PRIVATE_KEY,
-      {expiresIn:'1h'}
+      {expiresIn:'72h'}
     )
       // Here you can generate and return a token if using JWT, or handle successful login in other ways
       res.status(200).json({ 
