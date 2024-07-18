@@ -43,7 +43,7 @@ export const allVolunteer = async (req, res) => {
     //   return res.status(404).send('No Volunteer added');
     // }
 
-    res.status(200).json({ volunteers: allVolunteers });
+    res.status(200).json({ volunteers: allVolunteers, message:"Volunteer Added Sucessfully"});
   } catch (error) {
 
     return res.status(500).send(error.message);
@@ -84,7 +84,7 @@ export const updateVolunteer = async (req, res) => {
       return res.status(404).send('Volunteer not found');
     }
 
-    res.status(201).json({ volunteer: updatedVolunteer });
+    res.status(201).json({ volunteer: updatedVolunteer,message:"Volunteer Updated Sucessfully" });
   } catch (error) {
     return res.status(500).send(error.message);
   }
@@ -106,7 +106,7 @@ export const deleteVolunteer = async (req, res) => {
       await user.save();
     }
 
-    res.status(201).json({ volunteer: deletedVolunteer });
+    res.status(201).json({ volunteer: deletedVolunteer,message:"Volunteer Deleted Sucessfully" });
   } catch (error) {
     return res.status(500).send(error.message);
   }
