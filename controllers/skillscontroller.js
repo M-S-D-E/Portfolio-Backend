@@ -40,9 +40,9 @@ export const allSkills = async (req, res) => { // Renamed to allSkills
         return res.status(401).send('Unauthorized: User ID is missing');
     }
     const allSkills = await skillModel.find({ user: userId });
-    if (allSkills.length === 0) {
-      return res.status(404).send('No skills added');
-    }
+    // if (allSkills.length === 0) {
+    //   return res.status(404).send('No skills added');
+    // }
     res.status(200).json({ skills: allSkills });
   } catch (error) {
     console.error('Error fetching skills:', error);

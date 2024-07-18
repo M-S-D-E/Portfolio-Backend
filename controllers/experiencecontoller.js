@@ -41,9 +41,9 @@ export const allExperiences = async (req, res) => {
           return res.status(401).send('Unauthorized: User ID is missing');
       }
         const allExperiences = await experienceModel.find({ user: userId });
-        if (allExperiences.length === 0) {
-            return res.status(404).send('No experiences found');
-        }
+        // if (allExperiences.length === 0) {
+        //     return res.status(404).send('No experiences found');
+        // }
         res.status(200).json({ experiences: allExperiences });
     } catch (error) {
         console.error('Error fetching experiences:', error);
