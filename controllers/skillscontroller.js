@@ -25,7 +25,7 @@ export const addSkill = async (req, res) => {
     await user.save();
 
     // Return the skill
-    res.status(201).json({ skill });
+    res.status(201).json({ skill ,message:"Skills Added Sucessfully"});
   } catch (error) {
     console.error('Error adding skill:', error);
     res.status(500).send(error.message);
@@ -61,7 +61,7 @@ export const getSkill = async (req, res) => {
     if (!skill) {
       return res.status(404).send('Skill not found');
     }
-    res.status(200).json({ skill ,message:"Skills Added Sucessfully"});
+    res.status(200).json({ skill });
   } catch (error) {
     console.error('Error fetching skill:', error);
     res.status(500).send(error.message);
