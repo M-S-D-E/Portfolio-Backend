@@ -7,8 +7,8 @@ export const addOrUpdateUserProfile = async (req, res) => {
   try {
     const { error, value } = userProfileSchema.validate({
       ...req.body,
-      profilePicture: req.files.profilePicture[0].filename,
-      resume: req.files.resume[0].filename,
+      profilePicture: req.files?.profilePicture[0].filename,
+      resume: req.files?.resume[0].filename,
     });
 
     if (error) {
@@ -22,11 +22,8 @@ export const addOrUpdateUserProfile = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
-    let userProfile = await userProfileModel.findOneAndUpdate(
-      { user: id }, // Find by user ID
-      { ...value, user: id },
-      { new: true, upsert: true } // Create if not exists, return the new document
-    );
+  const userProfile = await userProfileModel.create(
+      { ...value, user: id });
 
     // Associate the user profile with the user
     user.userProfile = userProfile._id;
@@ -54,7 +51,10 @@ export const getUserProfile = async (req, res) => {
 
     const id = req.session?.user?.id || req?.user?.id;
 
-    const profile = await userProfileModel.findOne({ user: id });
+    const profile = await userProfileModel.findOne({ user: id }).populate({ 
+      path: 'user', 
+      select: '-password' 
+  });
     if (!profile) {
       return res.status(404).send("No profile added");
     }
