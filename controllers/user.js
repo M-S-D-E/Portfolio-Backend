@@ -171,7 +171,12 @@ export const token= async (req, res, next) => {
       // Here you can generate and return a token if using JWT, or handle successful login in other ways
       res.status(200).json({ 
         message: 'Login successful' ,
-       acessToken:token
+       acessToken:token,
+       user:{
+        firsrName:user.firstName,
+        lastName:user.lastName,
+        userName:user.userName
+       }
       });
     }
   } catch (error) {
