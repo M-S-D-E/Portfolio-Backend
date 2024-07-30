@@ -28,7 +28,7 @@ export const addAchievement = async (req, res) => {
     await user.save();
 
     res.status(201).json({ achievement: newAchievement,
-      message:"Achiievement added sucessfully",
+      message:"Achievement added sucessfully",
     });
   } catch (error) {
     console.error('Error adding achievement:', error);
@@ -102,8 +102,9 @@ export const updateAchievement = async (req, res) => {
     }
 
     // Send updated achievement as JSON response
-    res.status(200).json({ achievement: updatedAchievement,
-      message:"Achiievement updated sucessfully",
+    res.status(200).json({message:"Achievement updated sucessfully",
+       achievement: updatedAchievement,
+      
     });
   } catch (error) {
     // Handle any unexpected errors and send 500 Internal Server Error
