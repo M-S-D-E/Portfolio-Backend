@@ -173,7 +173,7 @@ export const token= async (req, res, next) => {
         message: 'Login successful' ,
        acessToken:token,
        user:{
-        firsrName:user.firstName,
+        firstName:user.firstName,
         lastName:user.lastName,
         userName:user.userName
        }
